@@ -93,3 +93,66 @@ pub mod janavani_freenet {
         }
     }
 }
+
+// ==========================================
+// MODULAR UNIT TESTS SECTION
+// ==========================================
+#[cfg(test)]
+mod tests {
+    // Bring all parent modules into local scope for testing
+    use super::*;
+
+    // 1. Test Nostr Feature Configuration Isolation
+    #[test]
+    #[cfg(feature = "nostr")]
+    fn test_nostr_feature_activation() {
+        let result = janavani_nostr::NostrBridge::init_identity();
+        assert!(result.is_ok(), "Nostr module initialization failed");
+    }
+
+    // 2. Test Nym Feature Configuration Isolation
+    #[test]
+    #[cfg(feature = "nym")]
+    fn test_nym_feature_activation() {
+        let dummy_payload = vec![1, 2, 3, 4];
+        let result = janavani_nym::NymPrivacyLayer::send_anonymous_packet(dummy_payload);
+        assert!(result.is_ok(), "Nym modular routing failed");
+    }
+
+    // 3. Test Reticulum Feature Configuration Isolation
+    #[test]
+    #[cfg(feature = "reticulum")]
+    fn test_reticulum_feature_activation() {
+        let dummy_packet = b"offgrid-packet-payload";
+        let result = janavani_reticulum::ReticulumMesh::broadcast_off_grid(dummy_packet);
+        assert!(result.is_ok(), "Reticulum mesh transport failed");
+    }
+
+    // 4. Test ZKP Feature Configuration Isolation
+    #[test]
+    #[cfg(feature = "zkp")]
+    fn test_zkp_feature_activation() {
+        let result = janavani_zkp::ResidencyVerifier::generate_membership_proof();
+        assert!(result.is_ok(), "Zero-Knowledge logic failed to compute proof");
+        let proof = result.unwrap();
+        assert!(!proof.is_empty(), "ZKP generated an empty byte array array structure");
+    }
+
+    // 5. Test Blockchain Feature Configuration Isolation
+    #[test]
+    #[cfg(feature = "blockchain")]
+    fn test_blockchain_feature_activation() {
+        let dummy_hash = [0u8; 32];
+        let result = janavani_blockchain::LedgerAnchor::lock_grievance_hash(dummy_hash);
+        assert!(result.is_ok(), "Blockchain anchoring transaction execution failed");
+    }
+
+    // 6. Test Freenet Feature Configuration Isolation
+    #[test]
+    #[cfg(feature = "freenet")]
+    fn test_freenet_feature_activation() {
+        let result = janavani_freenet::FreenetContract::sync_shared_state();
+        assert!(result.is_ok(), "Freenet decentralized sync engine simulation failed");
+    }
+}
+
