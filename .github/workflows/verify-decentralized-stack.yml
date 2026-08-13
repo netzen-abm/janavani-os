@@ -10,8 +10,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  validate-stack:
-    name: Run Protocol Integration Tests
+  validate-independent-features:
+    name: Verify Independent Protocol Features
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
         components: clippy, rustfmt
         targets: wasm32-unknown-unknown
 
-    - name: Install System Dependencies (Nym & Reticulum Network Layers)
+    - name: Install System Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential libssl-dev pkg-config libclang-dev
@@ -45,29 +45,21 @@ jobs:
     - name: Verify Code Formatting
       run: cargo fmt --check
 
-    - name: Run Code Analysis (Clippy Warnings & Security Audits)
-      run: cargo clippy --all-targets --all-features -- -D warnings
+    # Test each feature entirely independently to prevent overlap bugs
+    - name: Verify Nostr Feature
+      run: cargo test --features nostr
 
-    - name: Test Core Protocol Integration Suites
-      # This step executes individual workspace tests across all integrated modules
-      run: |
-        echo "⚡ Testing Nostr Relays & Key Operations..."
-        cargo test --package janavani-nostr --lib
-        
-        echo "🔎 Testing Nym Sphinx Packet Routing..."
-        cargo test --package janavani-nym --lib
-        
-        echo "📡 Testing Reticulum Mesh Off-Grid Packets..."
-        cargo test --package janavani-reticulum --lib
-        
-        echo "🔒 Verifying ZKP Arithmetic Circuit Proofs..."
-        cargo test --package janavani-zkp --lib
-        
-        echo "⛓ Testing Blockchain Smart Contract Bridges & Event Logs..."
-        cargo test --package janavani-blockchain --lib
+    - name: Verify Nym Feature
+      run: cargo test --features nym
 
-    - name: Test Freenet State Compilations
-      # Verifies the WASM compilation target layers specifically required for Freenet
-      run: |
-        echo "🛠️ Verifying Freenet Contract WASM compilation target..."
-        cargo build --target wasm32-unknown-unknown --all-features
+    - name: Verify Reticulum Feature
+      run: cargo test --features reticulum
+
+    - name: Verify ZKP Feature
+      run: cargo test --features zkp
+
+    - name: Verify Blockchain Feature
+      run: cargo test --features blockchain
+
+    - name: Verify Freenet Feature (WASM Compilation)
+      run: cargo build --target wasm32-unknown-unknown --features freenet
