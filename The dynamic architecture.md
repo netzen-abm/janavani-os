@@ -24,3 +24,16 @@
 │ Document workflows                  │
 │ Future services                     │
 └─────────────────────────────────────┘
+
+JANAVANI ECOSYSTEM
+
+                 JANAVANI
+                     │
+        ┌────────────┼────────────┐
+        ↓            ↓            ↓
+     TELEGRAM      WEB APP     FUTURE
+       NOW         BUILDING    INTERFACES
+        │            │            │
+        └────────────┴────────────┘
+                     ↓
+             CIVIC INFRASTRUCTURE
